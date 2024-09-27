@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Checkout</title>
+
+    <script type="module" defer src="/src/main.js"></script>
+</head>
+<body>
+
+    <button id="logout">logout</button>
+    <div id="pass" >
+        <h1>Password Protected</h1>
+        <p>Please enter the password to access the site:</p>
+        <input type="password" id="passwordInput" placeholder="Enter password">
+        <button id="passwordCheck">Submit</button>
+        <p id="errorMessage" style="color: red; display: none;">Incorrect password, please try again.</p>
+    </div>
+
+   
+    <div id="home" style="display:none;">
+        <h1>home</h1>
+        <input type="number" id="section">
+        <select id="teamType">
+            <option value="Fire">Fire</option>
+            <option value="Data">Data</option>
+        </select>
+        <button id="loadTeamData">Submit</button>
+    </div>
+
+    <div id="summary" style="display:none;">
+        <h1>Team Account</h1>
+        <div id="details"></div>
+        <button onclick></button>
+        <div style="display:flex">
+            <button onclick="setPage('scan')">CONSOME</button>
+            <button onclick="setPage('scan')">RETURN</button>
+            <button onclick="setPage('home')">Go Back</button>
+        </div>
+    </div>
+
+    <div id="scan" style="display:none;">
+        <h1>Scan</h1>
+        <input type="number" id="barcode">
+        <button onclick="setPage('summary')">Go back</button>
+    </div>
+
+</body>
+
+</html>

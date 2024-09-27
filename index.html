@@ -11,17 +11,21 @@
 <body>
 
     <button id="logout">logout</button>
-    <div id="pass" >
-        <h1>Password Protected</h1>
-        <p>Please enter the password to access the site:</p>
+    <div id="pass">
+        <h1>Password Protected 🔒</h1>
+        <p>Please enter the password to access school store:</p>
+        <p><small>TFs - see slack for password, contact Anuraag for details.</small></p>
+        <label>
+            Password:
         <input type="password" id="passwordInput" placeholder="Enter password">
+        </label>
         <button id="passwordCheck">Submit</button>
         <p id="errorMessage" style="color: red; display: none;">Incorrect password, please try again.</p>
     </div>
 
-   
+
     <div id="home" style="display:none;">
-        <h1>home</h1>
+        <h1>home 🏠</h1>
         <input type="number" id="section">
         <select id="teamType">
             <option value="Fire">Fire</option>
@@ -31,7 +35,7 @@
     </div>
 
     <div id="summary" style="display:none;">
-        <h1>Team Account</h1>
+        <h1>Team Account 💵</h1>
         <div id="details"></div>
         <button onclick></button>
         <div style="display:flex">
@@ -42,7 +46,7 @@
     </div>
 
     <div id="scan" style="display:none;">
-        <h1>Scan</h1>
+        <h1>Scan 🔬</h1>
         <input type="number" id="barcode">
         <button onclick="setPage('summary')">Go back</button>
     </div>

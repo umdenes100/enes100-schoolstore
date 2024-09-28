@@ -9,7 +9,7 @@
     <script type="module" defer src="/src/main.js"></script>
 </head>
 <body>
-
+<div>
     <button id="logout">logout</button>
     <div id="pass">
         <h1>Password Protected 🔒</h1>
@@ -17,7 +17,7 @@
         <p><small>TFs - see slack for password, contact Anuraag for details.</small></p>
         <label>
             Password:
-        <input type="password" id="passwordInput" placeholder="Enter password">
+            <input type="password" id="passwordInput" placeholder="Enter password">
         </label>
         <button id="passwordCheck">Submit</button>
         <p id="errorMessage" style="color: red; display: none;">Incorrect password, please try again.</p>
@@ -50,6 +50,7 @@
         <input type="number" id="barcode">
         <button onclick="setPage('summary')">Go back</button>
     </div>
+</div>
 
 </body>
 

@@ -1,28 +1,30 @@
-import {checkout,refund,getTeamData,accountUpdates} from "./databaseFunctions.js"; // Import the functions
+import {accountUpdates, checkout, getTeamData, refund} from "./databaseFunctions.js";
+import {hide, show} from "./showhide.js"; // Import the functions
+import './menu.js'
+import {getMenu} from "./menu.js";
+import {renderSettings} from "./settings.js";
 
 let section;
 let missionType;
 let barcode;
 
-console.log("Running");
+export function setPage(page) {
+    hide('pass')
+    hide('home')
+    hide('summary')
+    hide('purchase')
+    hide('return')
+    hide('settings')
 
-const passScreen = document.getElementById("pass");
-const homeScreen = document.getElementById("home");
-const summaryScreen = document.getElementById("summary");
-const purchaseScreen = document.getElementById("purchase");
-const returnScreen = document.getElementById("return")
+    show(page)
 
-
-
-function setPage(page) {
-    passScreen.style.display = "none";
-    homeScreen.style.display = "none";
-    summaryScreen.style.display = "none";
-    purchaseScreen.style.display = "none";
-    returnScreen.style.display = "none";
-
-    document.getElementById(page).style.display = "block";
+    if (page !== 'pass') {
+        show('protectedButtons');
+    } else
+        hide('protectedButtons');
 }
+
+setPage('home');
 
 
 function passwordCheck() {
@@ -32,96 +34,104 @@ function passwordCheck() {
 
     if (userInput === password) {
         setPage("home");
-        document.getElementById('errorMessage').style.display = 'none';
+        hide('errorMessage');
     } else {
-        document.getElementById('errorMessage').style.display = 'block';
+        show('errorMessage');
     }
 }
 
 
-
-function displayTeamData(teamData,section,missionType) {
-    if (teamData) {
-        let itemsHTML = '<h3>Items List:</h3><ul>';
-        if (teamData.items) {
-            for (const [itemName, itemQuantity] of Object.entries(teamData.items)) {
-                itemsHTML += `<li>${itemName}: ${itemQuantity}</li>`;
-            }
-        } else {
-            itemsHTML += '<li>No items available.</li>';
+async function renderTeamSummary(teamData, section, missionType) {
+    if (!teamData) {
+        document.getElementById('details').innerHTML = `
+            <p>No data available for ${missionType} team in section ${section}. Are you sure you entered your section ${section} correctly?</p>
+        `;
+        return;
+    }
+    let itemsHTML = '<h3>Items Purchased</h3><ul>';
+    const menu = await getMenu();
+    if (Object.entries(teamData.items).filter(([_, quantity]) => quantity > 0).length > 0) {
+        for (const [itemName, itemQuantity] of Object.entries(teamData.items)) {
+            if (itemQuantity > 0)
+                itemsHTML += `<li>${itemQuantity} x ${menu[itemName]?.name ?? "unknown item"}</li>`;
         }
-        itemsHTML += '</ul>';
-
-        // Render the team data, including items, on the summary page
-        document.getElementById('details').innerHTML = `
-            <p>Section: ${section}</p>
-            <p>Mission Type: ${missionType}</p>
-            <p>Account Balance: ${teamData.wallet || 'N/A'}</p>
-            ${itemsHTML}  
-        `;
     } else {
-        document.getElementById('details').innerHTML = `
-            <p>No data available for this team.</p>
-        `;
+        itemsHTML += '<li>No items purchased.</li>';
     }
+    itemsHTML += '</ul>';
+
+    // Render the team data, including items, on the summary page
+    document.getElementById('details').innerHTML = `
+        <p>Section: ${section}</p>
+        <p>Mission Type: ${missionType}</p>
+        <p>Account Balance: $${teamData.wallet ?? 'N/A'}</p>
+        ${itemsHTML}  
+    `;
 }
 
-
-
-async function loadTeamData() {
+async function loadTeamDataPage() {
     section = document.getElementById("section").value;
     missionType = document.getElementById("missionType").value;
+    if (section.length !== 4) {
+        document.getElementById('homeErrorMessage').textContent = 'Section must be 4 numbers long.';
+        return
+    }
+    if (!/^\d+$/.test(section)) {
+        document.getElementById('homeErrorMessage').textContent = 'Section must be a number. (Ex: 0110)';
+        return
+    }
 
     const teamData = await getTeamData(section, missionType); // Fetch the team data
+    if (!teamData) {
+        document.getElementById('homeErrorMessage').textContent =
+            `No data available for ${missionType} team in section ${section}. Are you sure you entered your section correctly?`;
+        return;
+    }
+    document.getElementById('homeErrorMessage').textContent = ''; // Clear any previous error messages
 
-    displayTeamData(teamData,section,missionType); // Render the fetched data, including the .items list, on the summary page
+    await renderTeamSummary(teamData, section, missionType); // Render the fetched data, including the .items list, on the summary page
 
     setPage("summary"); // Switch to the summary page
 }
 
-async function loadPurchase(){
+async function loadPurchasePage() {
     section = document.getElementById("section").value;
     missionType = document.getElementById("missionType").value;
-    await accountUpdates(section, missionType,true);
+    await accountUpdates(section, missionType, true);
     setPage('purchase')
 }
-async function loadReturn(){
+
+async function loadReturnPage() {
     section = document.getElementById("section").value;
     missionType = document.getElementById("missionType").value;
-    await accountUpdates(section, missionType,false);
+    await accountUpdates(section, missionType, false);
     setPage('return')
 }
 
+async function loadSettingsPage() {
+    setPage('settings')
+    renderSettings();
+}
 
-async function teamPurchase(){
-    section = document.getElementById("section").value;
-    missionType = document.getElementById("missionType").value;
+
+async function executePurchase() {
     barcode = document.getElementById('barcode1').value;
-    await accountUpdates(section, missionType,true);
-    await checkout(section,missionType,barcode);
-
+    const result = await checkout(section, missionType, barcode);
+    document.getElementById('barcode1').value = '';
+    document.getElementById('purchaseError').innerHTML = result ?? '';
 }
 
-async function livePurchase(){
-    await teamPurchase();
-    setPage("purchase")
-}
-
-
-
-
-async function teamReturn(){
-    section = document.getElementById("section").value;
-    missionType = document.getElementById("missionType").value;
+async function teamReturn() {
     barcode = document.getElementById('barcode2').value;
-    await accountUpdates(section, missionType,false);
-    await refund(section,missionType,barcode);
+    const result = await refund(section, missionType, barcode);
+    document.getElementById('barcode2').value = '';
+    document.getElementById('returnError').innerHTML = result ?? '';
 }
-async function liveReturn(){
+
+async function executeReturn() {
     teamReturn();
     setPage("return")
 }
-
 
 
 function logout() {
@@ -134,9 +144,9 @@ function logout() {
 }
 
 
-document.getElementById('logout').onclick = () => logout();
+document.getElementById('logoutButton').onclick = () => logout();
 document.getElementById('passwordCheck').onclick = passwordCheck;
-document.getElementById("passwordInput").addEventListener("keypress", function(event) {
+document.getElementById("passwordInput").addEventListener("keypress", function (event) {
     // If the user presses the "Enter" key on the keyboard
     if (event.key === "Enter") {
         // Cancel the default action, if needed
@@ -147,15 +157,18 @@ document.getElementById("passwordInput").addEventListener("keypress", function(e
 });
 
 
-document.getElementById('loadTeamData').onclick = () => loadTeamData();
+document.getElementById('loadTeamDataPage').onclick = loadTeamDataPage;
 
 document.getElementById("summaryGoBack").onclick = () => setPage('home');
-document.getElementById('returnbtn').onclick = () => loadReturn();
-document.getElementById("purchasebtn").onclick = () => loadPurchase();
+document.getElementById('loadReturnPage').onclick = loadReturnPage;
+document.getElementById("loadPurchasePage").onclick = loadPurchasePage;
 
-document.getElementById("buy").onclick = () => livePurchase();
-document.getElementById("purchaseGoBack").onclick = () => loadTeamData();
+document.getElementById("executePurchase").onclick = executePurchase;
+document.getElementById("barcode1").onkeydown = (e) => {e.key === "Enter" && executePurchase()}
+document.getElementById("purchaseGoBack").onclick = loadTeamDataPage;
 
-document.getElementById("giveback").onclick = () => liveReturn();
-document.getElementById("returnGoBack").onclick = () => loadTeamData();
+document.getElementById("executeReturn").onclick = executeReturn;
+document.getElementById("barcode2").onkeydown = (e) => {e.key === "Enter" && executeReturn()}
+document.getElementById("returnGoBack").onclick = loadTeamDataPage;
 
+document.getElementById('loadSettingsPage').onclick = loadSettingsPage;

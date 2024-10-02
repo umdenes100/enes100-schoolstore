@@ -11,7 +11,13 @@
 </head>
 <body>
 <div>
-    <button id="logout">logout</button>
+    <div style="position: absolute; top: 10px; left: 10px;" id="protectedButtons">
+        <div style="display: flex; flex-direction: column; gap: 10px">
+            <button id="logoutButton">logout👋</button>
+            <button id="loadSettingsPage">settings⚙️</button>
+        </div>
+    </div>
+
     <div id="pass">
         <h1>Password Protected 🔒</h1>
         <p>Please enter the password to access school store:</p>
@@ -27,43 +33,54 @@
 
     <div id="home" style="display:none;">
         <h1>home 🏠</h1>
-        <input type="text" id="section">
-        <select id="missionType">
-            <option value="Fire">Fire</option>
-            <option value="Data">Data</option>
-            <option value="Seed">Seed</option>
-            <option value="Crash">Crash</option>
-            <option value="Material">Material</option>
-            <option value="Water">Water</option>
-        </select>
-        <button id="loadTeamData">Submit</button>
+        <label>Section
+            <input type="text" id="section">
+        </label>
+        <p id="homeErrorMessage" style="color: red;"></p>
+        <label>
+            Mission
+            <select id="missionType">
+                <option value="Fire">Fire</option>
+                <option value="Data">Data</option>
+                <option value="Seed">Seed</option>
+                <option value="Crash">Crash</option>
+                <option value="Material">Material</option>
+                <option value="Water">Water</option>
+            </select>
+        </label>
+        <button id="loadTeamDataPage" style="width: 100%">Submit</button>
     </div>
 
     <div id="summary" style="display:none;">
         <h1>Team Account 💵</h1>
         <div id="details"></div>
-        <button onclick></button>
-        <div style="display:flex">
-            <button id="purchasebtn">Purchase</button>
-            <button id="returnbtn">Return</button>
+        <label>
+            <button id="loadPurchasePage">Purchase</button>
+            <button id="loadReturnPage">Return</button>
             <button id="summaryGoBack">Go Back</button>
-        </div>
+        </label>
     </div>
 
     <div id="purchase" style="display:none;">
         <h1>Scan 🔬</h1>
         <input type="number" id="barcode1">
-        <button id="buy">Buy</button>
-        <button id="purchaseGoBack">Go back</button>
+        <button id="executePurchase">Buy</button>
+        <button id="purchaseGoBack">Done</button>
+        <p id="purchaseError" style="color: red"></p>
         <p id="purchaseBalance">Account Balance: </p>
     </div>
 
-    <div id="return" style="display:none;" >
+    <div id="return" style="display:none;">
         <h1>Scan 🔬</h1>
         <input type="number" id="barcode2">
-        <button id="giveback">Return</button>
-        <button id="returnGoBack">Go back</button>
+        <button id="executeReturn">Return</button>
+        <button id="returnGoBack">Done</button>
+        <p id="returnError" style="color: red"></p>
         <p id="returnBalance">Account Balance: </p>
+    </div>
+
+    <div id="settings" style="display:none;">
+        <h1>Settings ⚙️</h1>
     </div>
 
 </div>

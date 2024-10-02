@@ -45,6 +45,24 @@ body > div {
     padding: 30px;
 }
 
+input, select, button {
+    font-size: 16px;
+    color: white;
+    border: 1px solid #666;
+    border-radius: 4px;
+    padding: 4px;
+    /*margin: 4px;*/
+}
+
+label {
+    display: flex;
+    flex-direction: row;
+    /*justify-content: space-between;*/
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
 /* All our scrollbars should look consistent */
 ::-webkit-scrollbar {
     position: absolute;

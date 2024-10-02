@@ -1,4 +1,3 @@
-import '/style.css'
 import {checkout,refund,getTeamData,accountUpdates} from "./databaseFunctions.js"; // Import the functions
 
 let section;
@@ -52,7 +51,7 @@ function displayTeamData(teamData,section,missionType) {
             itemsHTML += '<li>No items available.</li>';
         }
         itemsHTML += '</ul>';
-        
+
         // Render the team data, including items, on the summary page
         document.getElementById('details').innerHTML = `
             <p>Section: ${section}</p>
@@ -72,11 +71,11 @@ function displayTeamData(teamData,section,missionType) {
 async function loadTeamData() {
     section = document.getElementById("section").value;
     missionType = document.getElementById("missionType").value;
-    
+
     const teamData = await getTeamData(section, missionType); // Fetch the team data
-    
+
     displayTeamData(teamData,section,missionType); // Render the fetched data, including the .items list, on the summary page
-    
+
     setPage("summary"); // Switch to the summary page
 }
 
@@ -85,13 +84,13 @@ async function loadPurchase(){
     missionType = document.getElementById("missionType").value;
     await accountUpdates(section, missionType,true);
     setPage('purchase')
-}  
+}
 async function loadReturn(){
     section = document.getElementById("section").value;
     missionType = document.getElementById("missionType").value;
     await accountUpdates(section, missionType,false);
     setPage('return')
-}  
+}
 
 
 async function teamPurchase(){
@@ -100,12 +99,12 @@ async function teamPurchase(){
     barcode = document.getElementById('barcode1').value;
     await accountUpdates(section, missionType,true);
     await checkout(section,missionType,barcode);
-    
+
 }
 
-async function livePurchase(){  
-    await teamPurchase();  
-    setPage("purchase") 
+async function livePurchase(){
+    await teamPurchase();
+    setPage("purchase")
 }
 
 
@@ -119,14 +118,14 @@ async function teamReturn(){
     await refund(section,missionType,barcode);
 }
 async function liveReturn(){
-    teamReturn();  
-    setPage("return") 
-} 
+    teamReturn();
+    setPage("return")
+}
 
 
 
-function logout() {    
-    const inputs = document.querySelectorAll('input[type="text"], input[type="password"], input[type="number"]'); 
+function logout() {
+    const inputs = document.querySelectorAll('input[type="text"], input[type="password"], input[type="number"]');
     inputs.forEach(input => {
         input.value = '';
     });

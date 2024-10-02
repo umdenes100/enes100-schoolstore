@@ -1,8 +1,8 @@
-import { ref, child, get, update, set } from "firebase/database";
+import { ref, child, get, update, set, onValue } from "firebase/database";
 import { database } from './firebaseConfig.js'; 
 
 
-
+//Prints out full school store data
 export async function printStoreAccounts() {
     const dbRef = ref(database); 
 
@@ -18,24 +18,12 @@ export async function printStoreAccounts() {
     }
 }
 
-// Function to write data to 'store-accounts'
-export async function writeUserData(Section, type) {
-    try {
-        // Await the update() call to update the 'store-accounts' object
-        await update(ref(database, 'store-accounts/' + Section), {
-            type  // Update the data field
-        });
-        console.log("Data updated successfully!");
-    } catch (error) {
-        console.error("Error updating data:", error);
-    }
-}
-
+//Prints team data for debugging
 export async function findTeam (Section, Mission){
     const dbRef = ref(database); // Reference to the database root
 
     try {
-        const snapshot = await get(child(dbRef, `store-accounts/${Section}/${Mission}`)); // Wait for data to be fetched
+        const snapshot = await get(child(dbRef, `store-accounts/${Section}${Mission}`)); // Wait for data to be fetched
         if (snapshot.exists()) {
             console.log(snapshot.val()); // Print the 'store-accounts' object
         } else {
@@ -47,11 +35,32 @@ export async function findTeam (Section, Mission){
 }
 
 
+export async function getTeamData(section, mission) {
+    const dbRef = ref(database); // Reference to the database root
+
+    try {
+        const snapshot = await get(child(dbRef, `store-accounts/${section}${mission}`)); // Wait for data to be fetched
+        if (snapshot.exists()) {
+            return snapshot.val(); // Return the team data
+        } else {
+            console.log("No data available");
+            return null; // Return null if no data is available
+        }
+    } catch (error) {
+        console.error("Error fetching store-accounts:", error);
+        return null; // Return null in case of an error
+    }
+}
+
+export async function setTeamData(section,mission,data){
+    await set(ref(database, `store-accounts/${section}${mission}`), data)
+} 
+//returns the menu
 export async function giveMenu (item){
     const dbRef = ref(database); // Reference to the database root
 
     try {
-        const snapshot = await get(child(dbRef, `store-accounts/Menu`)); // Wait for data to be fetched
+        const snapshot = await get(child(dbRef, `Menu`)); // Wait for data to be fetched
         if (snapshot.exists()) {
             console.log(snapshot.val()); // Print the 'store-accounts' object
             const data = await get(child(dbRef, `store-accounts/Menu/${item}`));
@@ -63,162 +72,100 @@ export async function giveMenu (item){
         console.error("Error fetching store-accounts:", error); // Log any errors
     }
 }
-export async function editWallet(Section, Mission, charge) {
-    const dbRef = ref(database); // Reference to the database root
 
-    try {
-        // Retrieve the current data from Firebase for the specified section and mission
-        const snapshot = await get(child(dbRef, `store-accounts/${Section}/${Mission}`));
-
-        if (snapshot.exists()) {
-            const data = snapshot.val(); // Extract the data from the snapshot
-
-            // Ensure that 'Wallet' exists and is a number
-            const currentWallet = data.Wallet || 0; // Default to 0 if Wallet is undefined
-
-            // Check if there's enough balance in the wallet to deduct the charge
-            if (currentWallet - charge >= 0) {
-                // Update the Wallet value by deducting the charge
-                await update(ref(database, `store-accounts/${Section}/${Mission}`), {
-                    Wallet: currentWallet - charge
-                });
-                console.log(`Wallet updated. New balance: ${currentWallet - charge}`);
-            } else {
-                console.log("Insufficient balance to perform the transaction.");
-            }
-        } else {
-            console.log("No account data available for this section and mission.");
+// Clears all the sections back to base must change the sections each semester
+export async function clearAll() {
+    for (const sec of ["0502", "0501", "FC02", "1002", "0301", "0302", "0701", "FC01", "0402", "0601", "0702", "0401", "0801", "0802", "1201", "0602", "1001"]) {
+        for (const mis of ["Fire", "Data", "Crash", "Seed", "Material", "Water"]) {
+            const key = sec + mis;
+            await setTeamData(sec, mis, {
+                wallet: 100, // Set initial wallet amount
+                items: null // Initialize as an empty object for storing items
+            });
         }
-
-    } catch (error) {
-        console.error("Error adding account:", error);
     }
 }
-
-export async function editList(Section, Mission, item) {
-    const dbRef = ref(database); // Reference to the database root
-    try {
-        const snapshot = await get(child(dbRef, `store-accounts/${Section}/${Mission}`)); // Fetch account data
-
-        if (snapshot.exists()) {
-            const data = snapshot.val(); // Extract the data from the snapshot
-
-            // Check if the item exists in the Items field
-            const currentAmount = data.Items?.[item] || 0;
-
-            if (currentAmount == 0) {
-                // Update the item quantity (setting it to 1)
-                await update(ref(database, `store-accounts/${Section}/${Mission}/Items`), {
-                    [item]: 1  // Dynamic key for the specific item
-                });
-                console.log(`Item '${item}' added with a quantity of 1.`);
-            } else {
-                await update(ref(database, `store-accounts/${Section}/${Mission}/Items`), {
-                    [item]: currentAmount +1   // Dynamic key for the specific item
-                });                
-            }
-        } else {
-            console.log("No account data available for this section and mission.");
-        }
-
-    } catch (error) {
-        console.error("Error editing list:", error);
-    }
-}
-
-/* Checkout function: Display team info, prompt for barcode, update account
-export async function checkout(Section, Mission) {
+//Buys items
+export async function checkout(Section, Mission, barcodeInput) {
     const dbRef = ref(database);
-  
-    // Create an interface for capturing user input
-    const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout
-    });
 
     try {
-        
-        const snapshot = await get(child(dbRef, `store-accounts/${Section}/${Mission}`));
-        
+        // Fetch the team's data
+        const snapshot = await get(child(dbRef, `store-accounts/${Section}${Mission}`));
+
         if (snapshot.exists()) {
-            const data = snapshot.val(); 
-            const currentItems = data.Items || {}; 
-            const currentWallet = data.Wallet || 0; 
+            const data = snapshot.val();
+            const currentItems = data.items || {}; // Correct casing here: 'items' with lowercase 'i'
+            const currentWallet = data.wallet || 0;
 
             // Display the current list and wallet balance
             console.log(`Current Items: ${JSON.stringify(currentItems)}`);
             console.log(`Current Wallet Balance: $${currentWallet}`);
         } else {
             console.log("No account data available for this section and mission.");
-            rl.close();
             return; 
         }
 
-        // Prompt user for the barcode
-        rl.question("Please scan the barcode (number): ", async (barcodeInput) => {
-            const item = await barcodeToItem(parseInt(barcodeInput)); // Convert barcode to item name
+        // Convert the barcode input to an item name
+        const item = await barcodeToItem(parseInt(barcodeInput));
 
-            if (item === "error") {
-                console.log("Invalid barcode. Please try again.");
-                rl.close();
+        if (item === "error") {
+            console.log("Invalid barcode. Please try again.");
+            return;
+        }
+
+        // Fetch the item price from the menu
+        const menuSnapshot = await get(child(dbRef, `store-accounts/Menu`));
+        if (menuSnapshot.exists()) {
+            const menuData = menuSnapshot.val();
+            const price = menuData[item];
+
+            if (!price) {
+                console.log("Item not found in the menu.");
                 return;
             }
 
-            // Fetch the item price from the menu
-            const menuSnapshot = await get(child(dbRef, `store-accounts/Menu`));
-            if (menuSnapshot.exists()) {
-                const menuData = menuSnapshot.val();
-                const price = menuData[item];
+            // Fetch the team's data again to get the updated balance and items
+            const teamSnapshot = await get(child(dbRef, `store-accounts/${Section}${Mission}`));
+            if (teamSnapshot.exists()) {
+                const teamData = teamSnapshot.val();
+                const updatedWallet = teamData.wallet || 0;
+                const updatedItems = teamData.items || {}; // Correct casing here
 
-                if (!price) {
-                    console.log("Item not found in the menu.");
-                    rl.close();
-                    return;
-                }
+                // Check if the wallet has enough balance for the item
+                if (updatedWallet >= price) {
+                    // Update the wallet balance and add or increment the item
+                    updatedItems[item] = (updatedItems[item] || 0) + 1; // Increment item quantity
 
-                // Fetch the team's data again to get the updated balance and items
-                const teamSnapshot = await get(child(dbRef, `store-accounts/${Section}/${Mission}`));
-                if (teamSnapshot.exists()) {
-                    const teamData = teamSnapshot.val();
-                    const updatedWallet = teamData.Wallet || 0;
-                    const updatedItems = teamData.Items || {};
+                    // Update the team's data in Firebase
+                    await update(ref(database, `store-accounts/${Section}${Mission}`), {
+                        wallet: updatedWallet - price, // Deduct the price from the wallet
+                        items: updatedItems // Correct casing: 'items' with lowercase 'i'
+                    });
 
-                    // Check if the wallet has enough balance for the item
-                    if (updatedWallet >= price) {
-                        // Update the wallet balance and add the item to the list
-                        await update(ref(database, `store-accounts/${Section}/${Mission}`), {
-                            Wallet: updatedWallet - price, // Deduct the price from the wallet
-                            Items: {
-                                ...updatedItems, // Keep existing items
-                                [item]: (updatedItems[item] || 0) + 1 // Add or increment the item
-                            }
-                        });
-
-                        console.log(`Item '${item}' added to the account.`);
-                        console.log(`New Wallet Balance: $${updatedWallet - price}`);
-                    } else {
-                        console.log("Insufficient balance to perform the transaction.");
-                    }
+                    console.log(`Item '${item}' added to the account.`);
+                    console.log(`New Wallet Balance: $${updatedWallet - price}`);
                 } else {
-                    console.log("No account data available for this section and mission.");
+                    console.log("Insufficient balance to perform the transaction.");
                 }
             } else {
-                console.log("Menu data is not available.");
+                console.log("No account data available for this section and mission.");
             }
-            rl.close(); // Close the readline interface
-        });
+        } else {
+            console.log("Menu data is not available.");
+        }
     } catch (error) {
         console.error("Error during checkout:", error);
-        rl.close(); // Ensure readline is closed in case of an error
     }
 }
-*/
+
+// Refunds items
 export async function refund(section, mission, barcode) {
     const dbRef = ref(database);
 
     try {
         // Convert the barcode to the item name
-        const item = barcodeToItem(barcode);
+        const item = barcodeToItem(parseInt(barcode));
 
         // Check if the barcode conversion was successful
         if (item === "error") {
@@ -228,7 +175,7 @@ export async function refund(section, mission, barcode) {
         console.log(`Refunding item:`, item);
 
         // Retrieve the current data from Firebase for the specified section and mission
-        const snapshot = await get(child(dbRef, `store-accounts/${section}/${mission}`));
+        const snapshot = await get(child(dbRef, `store-accounts/${section}${mission}`));
 
         if (!snapshot.exists()) {
             console.log("No account data available for this section and mission.");
@@ -236,8 +183,8 @@ export async function refund(section, mission, barcode) {
         }
 
         const data = snapshot.val();
-        const currentItems = data.Items || {};
-        const currentWallet = data.Wallet || 0;
+        const currentItems = data.items || {};
+        const currentWallet = data.wallet || 0;
 
         // Check if the item exists and has a quantity greater than 0
         if (!currentItems[item] || currentItems[item] <= 0) {
@@ -269,9 +216,9 @@ export async function refund(section, mission, barcode) {
         }
 
         // Update Firebase with the new wallet balance and items
-        await update(ref(database, `store-accounts/${section}/${mission}`), {
-            Wallet: currentWallet + price,
-            Items: updatedItems
+        await update(ref(database, `store-accounts/${section}${mission}`), {
+            wallet: currentWallet + price,
+            items: updatedItems
         });
 
         console.log(`Refund processed. Item '${item}' removed. New Wallet Balance: $${currentWallet + price}`);
@@ -279,10 +226,11 @@ export async function refund(section, mission, barcode) {
         console.error(`Error processing refund: ${error.message}`);
     }
 }
+//Barcode to item function this must be updated  
 export  function barcodeToItem(number) {
     switch(number) {
         case 1001:
-          return "Ardunio Uno";
+          return "Arduino Uno";
           break;
         case 1002:
           return "Motor Driver";
@@ -291,5 +239,28 @@ export  function barcodeToItem(number) {
           return "error";
       } 
 }    
+//Displays account information while scanning
+export async function accountUpdates(Section, Mission, screen) {
+    const accountRef = ref(database, `store-accounts/${Section}${Mission}/wallet`);
+
+    const snapshot = await get(accountRef);
+    const initialBalance = snapshot.val();
+
+    if (screen) {
+        document.getElementById('purchaseBalance').innerText = `Account Balance: $${initialBalance}`;
+    } else {
+        document.getElementById('returnBalance').innerText = `Account Balance: $${initialBalance}`;
+    }
+
+    onValue(accountRef, (snapshot) => {
+        const newBalance = snapshot.val();
+
+            if (screen) {
+            document.getElementById('purchaseBalance').innerText = `Account Balance: $${newBalance}`;
+        } else {
+            document.getElementById('returnBalance').innerText = `Account Balance: $${newBalance}`;
+        }
+    });
+}
 
 

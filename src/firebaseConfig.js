@@ -4,14 +4,13 @@ import { getDatabase } from "firebase/database";
 
 // Your Firebase configuration object
 const firebaseConfig = {
-  apiKey: "AIzaSyCIHukYa07oKC159AJV7RGN1Z-ZMOZQA2k",
-  authDomain: "check-ee399.firebaseapp.com",
-  databaseURL: "https://check-ee399-default-rtdb.firebaseio.com",
-  projectId: "check-ee399",
-  storageBucket: "check-ee399.appspot.com",
-  messagingSenderId: "616595701207",
-  appId: "1:616595701207:web:ee4e998307f445b65f9f92",
-  measurementId: "G-8LLFPR7BDT"
+  apiKey: "AIzaSyBAMDAGYHNMtPaXAwJl-BRvxvl37E7Z3xE",
+  authDomain: "engr-enes100tool-inv-firebase.firebaseapp.com",
+  databaseURL: "https://engr-enes100tool-inv-firebase-school-store.firebaseio.com/",
+  projectId: "engr-enes100tool-inv-firebase",
+  storageBucket: "engr-enes100tool-inv-firebase.appspot.com",
+  messagingSenderId: "763916402491",
+  appId: "1:763916402491:web:e598de3c258f7d4faa811e"
 };
 
 // Initialize Firebase app

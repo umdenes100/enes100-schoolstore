@@ -26,10 +26,14 @@
 
     <div id="home" style="display:none;">
         <h1>home 🏠</h1>
-        <input type="number" id="section">
-        <select id="teamType">
+        <input type="text" id="section">
+        <select id="missionType">
             <option value="Fire">Fire</option>
             <option value="Data">Data</option>
+            <option value="Seed">Seed</option>
+            <option value="Crash">Crash</option>
+            <option value="Material">Material</option>
+            <option value="Water">Water</option>
         </select>
         <button id="loadTeamData">Submit</button>
     </div>
@@ -39,17 +43,28 @@
         <div id="details"></div>
         <button onclick></button>
         <div style="display:flex">
-            <button onclick="setPage('scan')">CONSOME</button>
-            <button onclick="setPage('scan')">RETURN</button>
-            <button onclick="setPage('home')">Go Back</button>
+            <button id="purchasebtn">Purchase</button>
+            <button id="returnbtn">Return</button>
+            <button id="summaryGoBack">Go Back</button>
         </div>
     </div>
 
-    <div id="scan" style="display:none;">
+    <div id="purchase" style="display:none;">
         <h1>Scan 🔬</h1>
-        <input type="number" id="barcode">
-        <button onclick="setPage('summary')">Go back</button>
+        <input type="number" id="barcode1">
+        <button id="buy">Buy</button>
+        <button id="purchaseGoBack">Go back</button>
+        <p id="purchaseBalance">Account Balance: </p>
     </div>
+
+    <div id="return" style="display:none;" >
+        <h1>Scan 🔬</h1>
+        <input type="number" id="barcode2">
+        <button id="giveback">Return</button>
+        <button id="returnGoBack">Go back</button>
+        <p id="returnBalance">Account Balance: </p>
+    </div>
+
 </div>
 
 </body>

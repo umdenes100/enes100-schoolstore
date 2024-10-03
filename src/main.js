@@ -24,7 +24,7 @@ export function setPage(page) {
         hide('protectedButtons');
 }
 
-setPage('home');
+setPage('pass');
 
 
 function passwordCheck() {
@@ -76,7 +76,7 @@ async function loadTeamDataPage() {
         document.getElementById('homeErrorMessage').textContent = 'Section must be 4 numbers long.';
         return
     }
-    if (!/^\d+$/.test(section)) {
+    if (!/^\d+$/.test(section) && !section.includes('FC')) {
         document.getElementById('homeErrorMessage').textContent = 'Section must be a number. (Ex: 0110)';
         return
     }

@@ -50,10 +50,10 @@ async function renderTeamSummary(teamData, section, missionType) {
     }
     let itemsHTML = '<h3>Items Purchased</h3><ul>';
     const menu = await getMenu();
-    if (Object.entries(teamData.items).filter(([_, quantity]) => quantity > 0).length > 0) {
-        for (const [itemName, itemQuantity] of Object.entries(teamData.items)) {
-            if (itemQuantity > 0)
-                itemsHTML += `<li>${itemQuantity} x ${menu[itemName]?.name ?? "unknown item"}</li>`;
+    let filteredEntries = Object.entries(teamData.items ?? {}).filter(([_, quantity]) => quantity > 0);
+    if (filteredEntries.length > 0) {
+        for (const [barcode, itemQuantity] of filteredEntries) {
+            itemsHTML += `<li>${itemQuantity} x ${menu[barcode]?.name ?? 'unknown item (barcode: ' + barcode + ')'}</li>`;
         }
     } else {
         itemsHTML += '<li>No items purchased.</li>';

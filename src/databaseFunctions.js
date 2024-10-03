@@ -1,4 +1,4 @@
-import {child, get, onValue, ref, set, update} from "firebase/database";
+import {child, get, onValue, ref, set} from "firebase/database";
 import {database} from './firebaseConfig.js';
 import {getMenu} from "./menu.js";
 
@@ -68,6 +68,7 @@ export async function clearAll() {
         }
     }
 }
+// await clearAll();
 
 //Buys items
 export async function checkout(section, mission, barcode) {

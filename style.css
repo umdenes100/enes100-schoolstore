@@ -54,6 +54,13 @@ input, select, button {
     /*margin: 4px;*/
 }
 
+fieldset {
+    border: 1px solid #666;
+    border-radius: 4px;
+    padding: 10px;
+    margin: 10px 0;
+}
+
 label {
     display: flex;
     flex-direction: row;
@@ -61,6 +68,14 @@ label {
     align-items: center;
     gap: 10px;
     margin-bottom: 10px;
+}
+
+table {
+    width:100%; border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #666;
 }
 
 /* All our scrollbars should look consistent */

@@ -2,6 +2,7 @@ import {getMenu, setMenu} from "./menu.js";
 import {setPage} from "./main.js";
 
 export async function renderSettings() {
+    console.log('rendering settings');
     const menu = await getMenu();
     let menuStr = Object.entries(menu).map(([barcode, item]) =>
         `<tr>
@@ -16,14 +17,11 @@ export async function renderSettings() {
 <h2>Edit Menu</h2>
 <p>To edit a menu item, type in the barcode and new properties and click add item.</p>
 <style>
-td, th {
-    border: 1px solid white;
-}
 .delete {
     cursor: pointer;
 }
 </style>
-<table style="width:100%; border-collapse: collapse; border: 1px solid white">
+<table>
     <tr>
         <th>Barcode</th>
         <th>Name</th>

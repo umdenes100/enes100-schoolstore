@@ -30,9 +30,8 @@ setPage('pass');
 function passwordCheck() {
     const userInput = document.getElementById('passwordInput').value;
     document.getElementById('passwordInput').value = '';
-    const password = "1";
 
-    if (userInput === password) {
+    if (["Key$tone", "anuraagrules", 'forst'].includes(userInput)) {
         setPage("home");
         hide('errorMessage');
     } else {
@@ -157,6 +156,8 @@ document.getElementById("passwordInput").addEventListener("keypress", function (
 });
 
 
+
+
 document.getElementById('loadTeamDataPage').onclick = loadTeamDataPage;
 
 document.getElementById("summaryGoBack").onclick = () => setPage('home');
@@ -172,3 +173,9 @@ document.getElementById("barcode2").onkeydown = (e) => {e.key === "Enter" && exe
 document.getElementById("returnGoBack").onclick = loadTeamDataPage;
 
 document.getElementById('loadSettingsPage').onclick = loadSettingsPage;
+
+
+document.addEventListener('keydown', function(event) {
+    if( event.keyCode == 13 || event.keyCode == 17 || event.keyCode == 74 )
+      event.preventDefault();
+  });

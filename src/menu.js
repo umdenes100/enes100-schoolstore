@@ -28,4 +28,4 @@ async function resetMenu() {
     })
 }
 
-resetMenu()
+// resetMenu()

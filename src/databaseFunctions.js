@@ -57,6 +57,14 @@ export async function setTeamData(section, mission, data) {
     await set(ref(database, `store-accounts/${section}${mission}`), data)
 }
 
+export async  function lastestTransaction(section, mission,data,person){
+     const teamData = await getTeamData(section, mission);
+     if (!teamData || !menu) {
+        return "Error fetching team data or menu."
+    }
+    
+} 
+
 // Clears all the sections back to base must change the sections each semester
 export async function clearAll() {
     for (const sec of ["0502", "0501", "FC02", "1002", "0301", "0302", "0701", "FC01", "0402", "0601", "0702", "0401", "0801", "0802", "1201", "0602", "1001"]) {

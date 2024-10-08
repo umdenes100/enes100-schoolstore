@@ -43,6 +43,8 @@ body > div {
     /*width: 100%;*/
     /*max-width: 800px;*/
     padding: 30px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 input, select, button {

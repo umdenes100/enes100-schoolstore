@@ -1,5 +1,6 @@
 import {getMenu, setMenu} from "./menu.js";
 import {setPage} from "./main.js";
+import {getHistory} from "./history.js";
 
 export async function renderSettings() {
     console.log('rendering settings');
@@ -10,6 +11,17 @@ export async function renderSettings() {
             <td>${item.name}</td>
             <td>$${item.price}</td>
             <td class="delete" id="${barcode}">🗑️</td>
+        </tr>`
+    ).join('');
+    const history = await getHistory();
+    let tableStr = Object.values(history).toReversed().map(({section, mission, action, what, time, who}) =>
+        `<tr>
+            <td>${section}</td>
+            <td>${mission}</td>
+            <td>${action}</td>
+            <td>${what}</td>
+            <td>${new Date(time).toLocaleString()}</td>
+            <td>${who}</td>
         </tr>`
     ).join('');
     document.getElementById('settings').innerHTML = `
@@ -36,6 +48,20 @@ export async function renderSettings() {
     <label>Name:<input type="text" id="addItemName"></label>
     <label>Price:<input type="number" id="addItemPrice" min="0"></label>
     <button id="addItemButton">Add Item</button>
+</fieldset>
+<fieldset style="height: 100px; overflow-y: scroll">
+    <legend>Purchase / Refund History</legend>
+    <table>
+        <tr>
+            <th>Section</th>
+            <th>Mission</th>
+            <th>Action</th>
+            <th>What</th>
+            <th>When</th>
+            <th>TF</th>
+        </tr>
+        ${tableStr}
+    </table>
 </fieldset>
 <button id="done">done</button>
 `

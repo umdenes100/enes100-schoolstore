@@ -1,6 +1,7 @@
 import {child, get, onValue, ref, set} from "firebase/database";
 import {database} from './firebaseConfig.js';
 import {getMenu} from "./menu.js";
+import {logHistory} from "./history.js";
 
 
 //Prints out full school store data
@@ -57,14 +58,6 @@ export async function setTeamData(section, mission, data) {
     await set(ref(database, `store-accounts/${section}${mission}`), data)
 }
 
-export async  function lastestTransaction(section, mission,data,person){
-     const teamData = await getTeamData(section, mission);
-     if (!teamData || !menu) {
-        return "Error fetching team data or menu."
-    }
-    
-} 
-
 // Clears all the sections back to base must change the sections each semester
 export async function clearAll() {
     for (const sec of ["0502", "0501", "FC02", "1002", "0301", "0302", "0701", "FC01", "0402", "0601", "0702", "0401", "0801", "0802", "1201", "0602", "1001"]) {
@@ -76,6 +69,7 @@ export async function clearAll() {
         }
     }
 }
+
 // await clearAll();
 
 //Buys items
@@ -99,7 +93,10 @@ export async function checkout(section, mission, barcode) {
     teamData.items = teamData.items || {};
     teamData.items[barcode] = (teamData.items[barcode] || 0) + 1;
 
-    await setTeamData(section, mission, teamData);
+    await Promise.all([
+        logHistory(section, mission, "purchase", barcode),
+        setTeamData(section, mission, teamData)
+    ]);
 }
 
 // Refunds items
@@ -122,7 +119,11 @@ export async function refund(section, mission, barcode) {
     teamData.wallet += item.price;
     teamData.items[barcode] -= 1;
 
-    await setTeamData(section, mission, teamData);
+    // await setTeamData(section, mission, teamData);
+    await Promise.all([
+        logHistory(section, mission, "return", barcode),
+        setTeamData(section, mission, teamData)
+    ]);
 }
 
 //Displays account information while scanning

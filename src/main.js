@@ -3,6 +3,7 @@ import {hide, show} from "./showhide.js"; // Import the functions
 import './menu.js'
 import {getMenu} from "./menu.js";
 import {renderSettings} from "./settings.js";
+import {setName} from "./history.js";
 
 let section;
 let missionType;
@@ -32,6 +33,8 @@ function passwordCheck() {
     document.getElementById('passwordInput').value = '';
 
     if (["Key$tone", "anuraagrules", 'forst'].includes(userInput)) {
+        setName(document.getElementById('tfName').value)
+        document.getElementById('tfName').value = '';
         setPage("home");
         hide('errorMessage');
     } else {
@@ -145,16 +148,7 @@ function logout() {
 
 document.getElementById('logoutButton').onclick = () => logout();
 document.getElementById('passwordCheck').onclick = passwordCheck;
-document.getElementById("passwordInput").addEventListener("keypress", function (event) {
-    // If the user presses the "Enter" key on the keyboard
-    if (event.key === "Enter") {
-        // Cancel the default action, if needed
-        event.preventDefault();
-        // Trigger the button element with a click
-        document.getElementById("passwordCheck").click();
-    }
-});
-
+document.getElementById("passwordInput").onkeydown = (e) => {e.key === "Enter" && passwordCheck()}
 
 
 
@@ -176,6 +170,6 @@ document.getElementById('loadSettingsPage').onclick = loadSettingsPage;
 
 
 document.addEventListener('keydown', function(event) {
-    if( event.keyCode == 13 || event.keyCode == 17 || event.keyCode == 74 )
+    if( event.keyCode === 13 || event.keyCode === 17 || event.keyCode === 74 )
       event.preventDefault();
   });

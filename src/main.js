@@ -112,7 +112,7 @@ async function loadReturnPage() {
 
 async function loadSettingsPage() {
     setPage('settings')
-    renderSettings();
+    await renderSettings();
 }
 
 

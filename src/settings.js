@@ -50,7 +50,9 @@ export async function renderSettings() {
     <button id="addItemButton">Add Item</button>
 </fieldset>
 <fieldset style="height: 100px; overflow-y: scroll">
-    <legend>Purchase / Refund History</legend>
+    <legend>Purchase / Refund History
+    <button id="downloadHistoryAsCSV">download</button>
+    </legend>
     <table>
         <tr>
             <th>Section</th>
@@ -93,6 +95,22 @@ export async function renderSettings() {
         await setMenu(menu);
         // noinspection ES6MissingAwait
         renderSettings();
+    }
+
+    document.getElementById('downloadHistoryAsCSV').onclick = () => {
+        // Takes the entire history, writes it to a CSV file, and downloads it.
+        // First row should be labels. Same format as table.
+        // Note: The locale time string has a comma, so I just added the date AND time in separate columns.
+        const csv = Object.values(history).toReversed().map(({section, mission, action, what, time, who}) =>
+            `${section},${mission},${action},${what},${new Date(time).toLocaleString()},${who}`
+        ).join('\n');
+        const header = 'Section,Mission,Action,What,Date,Time,TF\n';
+        const blob = new Blob([header + csv], {type: 'text/csv'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'history.csv';
+        a.click();
     }
 
     document.getElementById('done').onclick = () => {

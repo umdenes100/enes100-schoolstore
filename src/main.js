@@ -148,8 +148,9 @@ function logout() {
 
 document.getElementById('logoutButton').onclick = () => logout();
 document.getElementById('passwordCheck').onclick = passwordCheck;
-document.getElementById("passwordInput").onkeydown = (e) => {e.key === "Enter" && passwordCheck()}
-
+document.getElementById("passwordInput").onkeydown = (e) => {
+    e.key === "Enter" && passwordCheck()
+}
 
 
 document.getElementById('loadTeamDataPage').onclick = loadTeamDataPage;
@@ -159,17 +160,22 @@ document.getElementById('loadReturnPage').onclick = loadReturnPage;
 document.getElementById("loadPurchasePage").onclick = loadPurchasePage;
 
 document.getElementById("executePurchase").onclick = executePurchase;
-document.getElementById("barcode1").onkeydown = (e) => {e.key === "Enter" && executePurchase()}
+document.getElementById("barcode1").onkeydown = (e) => {
+    e.key === "Enter" && executePurchase()
+}
 document.getElementById("purchaseGoBack").onclick = loadTeamDataPage;
 
 document.getElementById("executeReturn").onclick = executeReturn;
-document.getElementById("barcode2").onkeydown = (e) => {e.key === "Enter" && executeReturn()}
+document.getElementById("barcode2").onkeydown = (e) => {
+    e.key === "Enter" && executeReturn()
+}
 document.getElementById("returnGoBack").onclick = loadTeamDataPage;
 
 document.getElementById('loadSettingsPage').onclick = loadSettingsPage;
 
 
-document.addEventListener('keydown', function(event) {
-    if( event.keyCode === 13 || event.keyCode === 17 || event.keyCode === 74 )
-      event.preventDefault();
-  });
+document.addEventListener('keydown', function (event) {
+    if (!event.ctrlKey) return;
+    if (event.keyCode === 13 || event.keyCode === 17 || event.keyCode === 74)
+        event.preventDefault();
+});

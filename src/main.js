@@ -1,4 +1,4 @@
-import {accountUpdates, checkout, getTeamData, refund} from "./databaseFunctions.js";
+import {accountUpdates, addSections, checkout, clearAll, deleteSections, getTeamData, refund} from "./databaseFunctions.js";
 import {hide, show} from "./showhide.js"; // Import the functions
 import './menu.js'
 import {getMenu} from "./menu.js";
@@ -16,6 +16,7 @@ export function setPage(page) {
     hide('purchase')
     hide('return')
     hide('settings')
+    hide('admin')
 
     show(page)
 
@@ -135,6 +136,28 @@ async function executeReturn() {
     setPage("return")
 }
 
+async function sectionAdd(){
+    let sectionList = document.getElementById("sectionNum").value;    
+    await addSections(sectionList);
+    document.getElementById('sectionNum').value = '';
+}
+async function executeSectionAdd() {
+    sectionAdd();
+    setPage("admin")
+}
+
+
+async function sectionRemove(){
+    let sectionList = document.getElementById("sectionNum").value;    
+    await deleteSections(sectionList);
+    document.getElementById('sectionNum').value = '';
+
+}
+async function executeSectionRemove() {
+    sectionRemove();
+    setPage("admin")
+}
+
 
 function logout() {
     const inputs = document.querySelectorAll('input[type="text"], input[type="password"], input[type="number"]');
@@ -144,7 +167,6 @@ function logout() {
 
     setPage('pass');
 }
-
 
 document.getElementById('logoutButton').onclick = () => logout();
 document.getElementById('passwordCheck').onclick = passwordCheck;
@@ -179,3 +201,11 @@ document.addEventListener('keydown', function (event) {
     if (event.keyCode === 13 || event.keyCode === 17 || event.keyCode === 74)
         event.preventDefault();
 });
+
+document.getElementById("loadAdminPage").onclick = () => setPage('admin');
+document.getElementById("adminGoBack").onclick = () => setPage('home');
+document.getElementById("AddSectionBtn").onclick = () => executeSectionAdd();
+document.getElementById("RemoveSectionBtn").onclick = () => executeSectionRemove();
+
+
+

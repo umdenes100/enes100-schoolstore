@@ -1,26 +1,5 @@
 // test.js
-import {checkout, clearAll, findTeam, refund} from "./databaseFunctions.js"; // Import the functions
-await clearAll();
-await findTeam("0301", "Fire"); // Run the sequence
-console.log('\n')
-await checkout('0301', 'Fire', 1001);
-console.log('\n')
-await findTeam("0301", "Fire"); // Run the sequence
-console.log('\n')
-await checkout('0301', 'Fire', 1001);
-console.log('\n')
-await findTeam("0301", "Fire"); // Run the sequence
-console.log('\n')
-await refund('0301', 'Fire', 1001)
-console.log('\n')
-await findTeam("0301", "Fire"); // Run the sequence
-console.log('\n')
-await refund('0301', 'Fire', 1001)
-console.log('\n')
-await findTeam("0301", "Fire"); // Run the sequence
-console.log('\n')
-await refund('0301', 'Fire', 1001)
-console.log('\n')
-await findTeam("0301", "Fire"); // Run the sequence
-
+import {addSections, checkout, clearAll, findTeam, refund,deleteSections} from "./databaseFunctions.js"; // Import the functions
+//await addSections();
+await deleteSections("00,0005,0001 ,0002, 0003, 0004"); 
 // console.log("hello");

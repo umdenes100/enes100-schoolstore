@@ -60,14 +60,38 @@ export async function setTeamData(section, mission, data) {
 
 // Clears all the sections back to base must change the sections each semester
 export async function clearAll() {
-    for (const sec of ["0502", "0501", "FC02", "1002", "0301", "0302", "0701", "FC01", "0402", "0601", "0702", "0401", "0801", "0802", "1201", "0602", "1001"]) {
+    for (const sec of ["0502", "FC02", "1002", "0301", "0302", "0701", "FC01", "0402", "0601", "0702", "0401", "0801", "0802", "1201", "0602", "1001"]) {
         for (const mis of ["Fire", "Data", "Crash", "Seed", "Material", "Water"]) {
             await setTeamData(sec, mis, {
-                wallet: 100, // Set initial wallet amount
+                wallet: 50, // Set initial wallet amount
                 items: null // Initialize as an empty object for storing items
             });
         }
     }
+}
+
+export async function addSections(newSection){
+let str = newSection.replaceAll(' ','');    
+let array = str.split(',');
+    for (const sec of  array) {
+        for (const mis of ["Fire", "Data", "Crash", "Seed", "Material", "Water"]) {
+            await setTeamData(sec, mis, {
+                wallet: 50, // Set initial wallet amount
+                items: null // Initialize as an empty object for storing items
+            });
+        }
+    }
+}
+
+export async function deleteSections(sectionList){
+    let str = sectionList.replaceAll(' ','');    
+    let array = str.split(',');
+    for (const section of array) {
+        for (const mis of ["Fire", "Data", "Crash", "Seed", "Material", "Water"]) {
+            await setTeamData(section, mis, null);// removes the object by setting it to null
+        }
+    }
+      
 }
 
 // await clearAll();

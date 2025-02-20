@@ -94,6 +94,55 @@ export async function deleteSections(sectionList){
       
 }
 
+
+export async function updateSectionList(newSections) {
+    const sectionRef = ref(database, 'sections');
+
+    try {
+        const snapshot = await get(sectionRef);
+        let sections = snapshot.exists() ? snapshot.val() : [];
+
+        let sectionArray = newSections.replaceAll(' ', '').split(',');
+        let updatedSections = [...new Set([...sections, ...sectionArray])]; // Avoid duplicates
+
+        await set(sectionRef, updatedSections);
+        console.log("Sections updated:", updatedSections);
+    } catch (error) {
+        console.error("Error updating section list:", error);
+    }
+}
+export async function removeSectionList(newSections) {
+    const sectionRef = ref(database,"sections");
+
+    try {
+        const snapshot = await get(sectionRef);
+        let sections = snapshot.exists() ? snapshot.val() : [];
+        let sectionArray = newSections.replaceAll(' ', '').split(',');
+        let updatedsections = sections.filter(item => !sectionArray.includes(item));
+        await set(sectionRef,updatedsections);
+        console.log("Sections removed section list",updatedsections)
+    } catch (error){
+        console.error("Error removing secions from list  ")
+    }
+
+}
+
+export async function getSectionList() {
+    const sectionRef = ref(database, 'sections');
+
+    try {
+        const snapshot = await get(sectionRef);
+        if (snapshot.exists()) {
+            return snapshot.val();
+        } else {
+            console.log("No sections available");
+            return [];
+        }
+    } catch (error) {
+        console.error("Error fetching section list:", error);
+        return [];
+    }
+}
 // await clearAll();
 
 //Buys items

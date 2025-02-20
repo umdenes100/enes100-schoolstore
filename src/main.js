@@ -1,4 +1,4 @@
-import {accountUpdates, addSections, checkout, clearAll, deleteSections, getTeamData, refund} from "./databaseFunctions.js";
+import {accountUpdates, addSections, checkout, deleteSections, getTeamData, refund,removeSectionList,updateSectionList,getSectionList} from "./databaseFunctions.js";
 import {hide, show} from "./showhide.js"; // Import the functions
 import './menu.js'
 import {getMenu} from "./menu.js";
@@ -24,6 +24,9 @@ export function setPage(page) {
         show('protectedButtons');
     } else
         hide('protectedButtons');
+    if (page === 'admin') {
+        renderSectionList();
+    }
 }
 
 setPage('pass');
@@ -139,10 +142,12 @@ async function executeReturn() {
 async function sectionAdd(){
     let sectionList = document.getElementById("sectionNum").value;    
     await addSections(sectionList);
+    await updateSectionList(sectionList);
     document.getElementById('sectionNum').value = '';
 }
 async function executeSectionAdd() {
-    sectionAdd();
+    await sectionAdd();   
+    await renderSectionList();
     setPage("admin")
 }
 
@@ -150,14 +155,40 @@ async function executeSectionAdd() {
 async function sectionRemove(){
     let sectionList = document.getElementById("sectionNum").value;    
     await deleteSections(sectionList);
+    await removeSectionList(sectionList);
     document.getElementById('sectionNum').value = '';
 
 }
 async function executeSectionRemove() {
-    sectionRemove();
+    await sectionRemove();
+    await updateSectionList();
     setPage("admin")
 }
+function sortSections(str1,str2) {
+    for (let i = 0; i < 4; i++) {
+        if(str1.charAt(i) > str2.charAt(i)) {
+            return 1;
+        }else if(str1.charAt(i) < str2.charAt(i)) {
+            return -1;
+        }
+    }
+    return 0;
+}
+async function renderSectionList() {
+    const sectionList = await getSectionList();
+    const sectionListContainer = document.getElementById('sectionListContainer');
 
+    if (sectionListContainer) {
+        
+        const sortedSectionList = sectionList.sort(sortSections);
+
+        if (sortedSectionList.length > 0) {
+            sectionListContainer.innerHTML = '<h3>Section List</h3><ul>' + sortedSectionList.map(section => `<li>${section}</li>`).join('') + '</ul>';
+        } else {
+            sectionListContainer.innerHTML = '<p>No sections available.</p>';
+        }
+    }
+}
 
 function logout() {
     const inputs = document.querySelectorAll('input[type="text"], input[type="password"], input[type="number"]');

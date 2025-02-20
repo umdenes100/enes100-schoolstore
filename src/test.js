@@ -1,5 +1,7 @@
 // test.js
-import {addSections, checkout, clearAll, findTeam, refund,deleteSections} from "./databaseFunctions.js"; // Import the functions
+import {updateSectionList,removeSectionList} from "./databaseFunctions.js"; // Import the functions
 //await addSections();
-await deleteSections("00,0005,0001 ,0002, 0003, 0004"); 
+await updateSectionList("0004");
+await removeSectionList("0004");
+
 // console.log("hello");

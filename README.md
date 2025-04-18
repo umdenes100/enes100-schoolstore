@@ -5,3 +5,5 @@ The password to login is Key$tone
 In order to update sections throughout different semesters just go to admin page
 
 To get access to firebase console just slack Josh
+
+Created by Anuraag and Forrest 2024

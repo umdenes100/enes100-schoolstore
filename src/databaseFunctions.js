@@ -74,7 +74,7 @@ export async function addSections(newSection){
 let str = newSection.replaceAll(' ','');    
 let array = str.split(',');
     for (const sec of  array) {
-        for (const mis of ["Fire", "Data", "Crash", "Seed", "Material", "Water"]) {
+        for (const mis of ["Fire", "Data", "Hydrogen", "Seed", "Material", "Water"]) {
             await setTeamData(sec, mis, {
                 wallet: 50, // Set initial wallet amount
                 items: null // Initialize as an empty object for storing items
@@ -87,7 +87,7 @@ export async function deleteSections(sectionList){
     let str = sectionList.replaceAll(' ','');    
     let array = str.split(',');
     for (const section of array) {
-        for (const mis of ["Fire", "Data", "Crash", "Seed", "Material", "Water"]) {
+        for (const mis of ["Fire", "Data", "Hydrogen", "Seed", "Material", "Water"]) {
             await setTeamData(section, mis, null);// removes the object by setting it to null
         }
     }

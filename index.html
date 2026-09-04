@@ -93,14 +93,28 @@
 
     <div id="admin" style="display:none;">
         <h1>Sections</h1>
-        <p style="color: red;">Deleting sections removes that sections account data</p>
-        <input type="text" id="sectionNum">
-        <label style="display: block; margin-top: 10px;">
-            <button id="adminGoBack">Go Back</button>
-            <button id="RemoveSectionBtn">Remove Section</button>
-            <button id="AddSectionBtn">Add Section</button>
-        </label>  
-        <div id="sectionListContainer"></div>      
+
+        <fieldset>
+            <legend>Manual</legend>
+            <p class="warning-text">Deleting a section removes that section's account data</p>
+            <label>
+                <input type="text" id="sectionNum" placeholder="e.g. 0301, 0302">
+                <button id="AddSectionBtn">Add Section</button>
+                <button id="RemoveSectionBtn">Remove Section</button>
+            </label>
+        </fieldset>
+
+        <fieldset>
+            <legend>umd.io Sync</legend>
+            <label>
+                <button id="SyncSectionsBtn">Sync Sections</button>
+                <button id="RemoveAllSectionsBtn" class="danger-button">Remove All Sections</button>
+            </label>
+            <p id="sectionSyncStatus"></p>
+        </fieldset>
+
+        <div id="sectionListContainer"></div>
+        <button id="adminGoBack" style="margin-top: 10px;">Go Back</button>
     </div>
       
 

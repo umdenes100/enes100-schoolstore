@@ -63,6 +63,30 @@ fieldset {
     margin: 10px 0;
 }
 
+legend {
+    padding: 0 6px;
+    color: #aaa;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.warning-text {
+    color: #ff6b6b;
+    font-size: 14px;
+    margin: 0 0 10px;
+}
+
+.danger-button {
+    color: #ff6b6b;
+    border-color: #ff6b6b;
+}
+
+.danger-button:hover {
+    background-color: #ff6b6b;
+    color: #121B21;
+}
+
 label {
     display: flex;
     flex-direction: row;

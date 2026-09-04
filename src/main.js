@@ -1,4 +1,4 @@
-import {accountUpdates, addSections, checkout, deleteSections, getTeamData, refund,removeSectionList,updateSectionList,getSectionList} from "./databaseFunctions.js";
+import {accountUpdates, addSections, checkout, deleteSections, getTeamData, refund,removeSectionList,updateSectionList,getSectionList,syncSectionsFromUmd,removeAllSections} from "./databaseFunctions.js";
 import {hide, show} from "./showhide.js"; // Import the functions
 import './menu.js'
 import {getMenu} from "./menu.js";
@@ -161,9 +161,76 @@ async function sectionRemove(){
 }
 async function executeSectionRemove() {
     await sectionRemove();
-    await updateSectionList();
+    await renderSectionList();
     setPage("admin")
 }
+
+async function executeSectionSync() {
+    const statusEl = document.getElementById('sectionSyncStatus');
+    if (statusEl) statusEl.textContent = 'Syncing with umd.io...';
+
+    try {
+        const {added, removed} = await syncSectionsFromUmd();
+        await renderSectionList();
+
+        if (statusEl) {
+            const parts = [];
+            if (added.length > 0) parts.push(`Added: ${added.join(', ')}`);
+            if (removed.length > 0) parts.push(`Removed: ${removed.join(', ')}`);
+            statusEl.textContent = parts.length > 0 ? parts.join(' | ') : 'Already up to date.';
+        }
+    } catch (error) {
+        console.error('Error syncing sections from umd.io:', error);
+        if (statusEl) statusEl.textContent = 'Sync failed — see console for details.';
+    }
+
+    setPage("admin")
+}
+
+let removeAllArmed = false;
+let removeAllArmTimeout = null;
+
+async function executeRemoveAllSections() {
+    const statusEl = document.getElementById('sectionSyncStatus');
+    const removeAllBtn = document.getElementById('RemoveAllSectionsBtn');
+
+    // Native confirm() dialogs are suppressed in some embedded browser
+    // environments (e.g. this app's preview pane), so this uses a two-click
+    // arm/confirm pattern instead of relying on window.confirm().
+    if (!removeAllArmed) {
+        removeAllArmed = true;
+        if (removeAllBtn) removeAllBtn.textContent = 'Click again to permanently delete ALL sections';
+        if (statusEl) statusEl.textContent = 'This will delete all sections and their account data. Click the button again within 5 seconds to confirm.';
+
+        clearTimeout(removeAllArmTimeout);
+        removeAllArmTimeout = setTimeout(() => {
+            removeAllArmed = false;
+            if (removeAllBtn) removeAllBtn.textContent = 'Remove All Sections';
+            if (statusEl) statusEl.textContent = '';
+        }, 5000);
+        return;
+    }
+
+    clearTimeout(removeAllArmTimeout);
+    removeAllArmed = false;
+    if (removeAllBtn) removeAllBtn.textContent = 'Remove All Sections';
+
+    try {
+        const removed = await removeAllSections();
+        await renderSectionList();
+        if (statusEl) {
+            statusEl.textContent = removed.length > 0
+                ? `Removed all sections: ${removed.join(', ')}`
+                : 'No sections to remove.';
+        }
+    } catch (error) {
+        console.error('Error removing all sections:', error);
+        if (statusEl) statusEl.textContent = 'Remove all failed — see console for details.';
+    }
+
+    setPage("admin")
+}
+
 function sortSections(str1,str2) {
     for (let i = 0; i < 4; i++) {
         if(str1.charAt(i) > str2.charAt(i)) {
@@ -237,6 +304,8 @@ document.getElementById("loadAdminPage").onclick = () => setPage('admin');
 document.getElementById("adminGoBack").onclick = () => setPage('home');
 document.getElementById("AddSectionBtn").onclick = () => executeSectionAdd();
 document.getElementById("RemoveSectionBtn").onclick = () => executeSectionRemove();
+document.getElementById("SyncSectionsBtn").onclick = () => executeSectionSync();
+document.getElementById("RemoveAllSectionsBtn").onclick = () => executeRemoveAllSections();
 
 
 

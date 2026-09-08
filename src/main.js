@@ -193,18 +193,26 @@ let removeAllArmTimeout = null;
 async function executeRemoveAllSections() {
     const statusEl = document.getElementById('sectionSyncStatus');
     const removeAllBtn = document.getElementById('RemoveAllSectionsBtn');
+    const adminControls = [
+        document.getElementById('adminGoBack'),
+        document.getElementById('SyncSectionsBtn'),
+        document.getElementById('AddSectionBtn'),
+        document.getElementById('RemoveSectionBtn'),
+    ].filter(Boolean);
 
     // Native confirm() dialogs are suppressed in some embedded browser
     // environments (e.g. this app's preview pane), so this uses a two-click
     // arm/confirm pattern instead of relying on window.confirm().
     if (!removeAllArmed) {
         removeAllArmed = true;
+        adminControls.forEach(btn => btn.disabled = true);
         if (removeAllBtn) removeAllBtn.textContent = 'Click again to permanently delete ALL sections';
         if (statusEl) statusEl.textContent = 'This will delete all sections and their account data. Click the button again within 5 seconds to confirm.';
 
         clearTimeout(removeAllArmTimeout);
         removeAllArmTimeout = setTimeout(() => {
             removeAllArmed = false;
+            adminControls.forEach(btn => btn.disabled = false);
             if (removeAllBtn) removeAllBtn.textContent = 'Remove All Sections';
             if (statusEl) statusEl.textContent = '';
         }, 5000);
@@ -213,6 +221,7 @@ async function executeRemoveAllSections() {
 
     clearTimeout(removeAllArmTimeout);
     removeAllArmed = false;
+    adminControls.forEach(btn => btn.disabled = false);
     if (removeAllBtn) removeAllBtn.textContent = 'Remove All Sections';
 
     try {

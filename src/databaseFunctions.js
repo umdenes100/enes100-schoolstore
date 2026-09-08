@@ -2,6 +2,7 @@ import {child, get, onValue, ref, set} from "firebase/database";
 import {database} from './firebaseConfig.js';
 import {getMenu} from "./menu.js";
 import {logHistory} from "./history.js";
+import {fetchCurrentEnes100Sections} from "./umdApi.js";
 
 
 //Prints out full school store data
@@ -71,27 +72,30 @@ export async function clearAll() {
 }
 
 export async function addSections(newSection){
-let str = newSection.replaceAll(' ','');    
+let str = newSection.replaceAll(' ','');
 let array = str.split(',');
+    const writes = [];
     for (const sec of  array) {
         for (const mis of ["Fire", "Data", "Hydrogen", "Seed", "Material", "Water"]) {
-            await setTeamData(sec, mis, {
+            writes.push(setTeamData(sec, mis, {
                 wallet: 50, // Set initial wallet amount
                 items: null // Initialize as an empty object for storing items
-            });
+            }));
         }
     }
+    await Promise.all(writes);
 }
 
 export async function deleteSections(sectionList){
-    let str = sectionList.replaceAll(' ','');    
+    let str = sectionList.replaceAll(' ','');
     let array = str.split(',');
+    const writes = [];
     for (const section of array) {
         for (const mis of ["Fire", "Data", "Hydrogen", "Seed", "Material", "Water"]) {
-            await setTeamData(section, mis, null);// removes the object by setting it to null
+            writes.push(setTeamData(section, mis, null));// removes the object by setting it to null
         }
     }
-      
+    await Promise.all(writes);
 }
 
 
@@ -142,6 +146,45 @@ export async function getSectionList() {
         console.error("Error fetching section list:", error);
         return [];
     }
+}
+
+// Reconciles the stored section list against the current ENES100 sections
+// reported by the umd.io course API, so the list doesn't need to be edited
+// by hand every semester. Returns the sections that were added and removed.
+export async function syncSectionsFromUmd() {
+    const currentSections = await getSectionList();
+    const liveSections = await fetchCurrentEnes100Sections();
+
+    const toAdd = liveSections.filter(section => !currentSections.includes(section));
+    const toRemove = currentSections.filter(section => !liveSections.includes(section));
+
+    if (toAdd.length > 0) {
+        const addStr = toAdd.join(',');
+        await addSections(addStr);
+        await updateSectionList(addStr);
+    }
+
+    if (toRemove.length > 0) {
+        const removeStr = toRemove.join(',');
+        await deleteSections(removeStr);
+        await removeSectionList(removeStr);
+    }
+
+    return {added: toAdd, removed: toRemove};
+}
+
+// Removes every section currently stored (and their account data). Intended
+// for testing the umd.io sync from a known-empty state — this is destructive
+// and should never be wired to run without an explicit confirmation step.
+export async function removeAllSections() {
+    const currentSections = await getSectionList();
+    if (currentSections.length === 0) return [];
+
+    const sectionStr = currentSections.join(',');
+    await deleteSections(sectionStr);
+    await removeSectionList(sectionStr);
+
+    return currentSections;
 }
 // await clearAll();
 

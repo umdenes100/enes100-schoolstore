@@ -14,3 +14,18 @@ To get access to firebase console just slack Josh
 
 Created by Anuraag and Forrest 2024
 Updated/Refreshed by Nipun 2026
+### Wheel and motor prices
+
+The public website and Firebase menu are separate sources. To preview the planned
+wheel and motor price update, run `node scripts/update-wheel-motor-prices.js`.
+At rollout, run `node scripts/update-wheel-motor-prices.js --apply` to update and
+verify only the listed price fields. The script preserves names, other prices,
+team balances, and purchase history. Each wheel price is per wheel; motors are
+5 Shells per motor. Coordinate the update with the website release. Existing
+refunds use the current menu price, including for items purchased before a change.
+
+Use the original Settings → Edit Menu form to add or update an item by barcode.
+The price label switches to US dollars for wood/acrylic sheets; other items use
+Shells. Individual saves update only that item's name and price, preserving
+other metadata and menu entries. Prices accept zero and up to two decimal places.
+The one-time wheel/motor update has been applied; no migration panel is shown.

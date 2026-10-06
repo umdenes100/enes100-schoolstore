@@ -5,7 +5,7 @@ export function isDollarItem(item) {
     return /\b(?:wood|acrylic)\b/i.test(item.name) && /\bsheets?\b/i.test(item.name);
 }
 
-function escapeHtml(value) {
+export function escapeHtml(value) {
     return String(value).replace(/[&<>"']/g, character => ({
         '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
     })[character]);

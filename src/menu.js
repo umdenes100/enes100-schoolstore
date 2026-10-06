@@ -1,4 +1,5 @@
-import {get, ref, set} from "firebase/database";
+import {priceUpdates, validateMenuItem} from "./menuPricing.js";
+import {get, ref, set, update, remove} from "firebase/database";
 import {database} from "./firebaseConfig.js";
 
 const menuRef = ref(database, 'menu');
@@ -29,3 +30,17 @@ async function resetMenu() {
 }
 
 // resetMenu()
+export async function saveMenuItem(barcode, name, price) {
+    const item = validateMenuItem(barcode, name, price);
+    await update(ref(database, `menu/${barcode}`), item);
+}
+
+export async function deleteMenuItem(barcode) {
+    if (!/^\d{4}$/.test(barcode)) throw new Error('Invalid barcode.');
+    await remove(ref(database, `menu/${barcode}`));
+}
+
+export async function applyWheelMotorPrices() {
+    const updates = priceUpdates(await getMenu());
+    await update(menuRef, updates);
+}

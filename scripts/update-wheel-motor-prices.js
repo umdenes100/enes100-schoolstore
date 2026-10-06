@@ -1,14 +1,7 @@
 import {get, ref, update} from 'firebase/database';
 import {database} from '../src/firebaseConfig.js';
 
-// Explicit barcodes prevent matching motor drivers or motor hubs by mistake.
-const changes = {
-    '1005': {name: 'Motors', price: 5},
-    '1036': {name: 'Wheel', price: 4},
-    '1037': {name: 'Small Wheel', price: 3},
-    '1038': {name: 'Omni Wheel', price: 5},
-    '1041': {name: 'Wheels Caster', price: 3},
-};
+import {priceChanges as changes} from '../src/menuPricing.js';
 
 try {
     const menu = (await get(ref(database, 'menu'))).val();

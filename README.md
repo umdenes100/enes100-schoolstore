@@ -24,9 +24,8 @@ team balances, and purchase history. Each wheel price is per wheel; motors are
 5 Shells per motor. Coordinate the update with the website release. Existing
 refunds use the current menu price, including for items purchased before a change.
 
-Staff can also use **Settings → Edit Menu → Apply these prices** to apply the
-reviewed wheel/motor prices. The panel shows current and proposed values before
-saving. Use a row's **Edit** button for individual changes, then **Save Item**.
+Use the original Settings → Edit Menu form to add or update an item by barcode.
 The price label switches to US dollars for wood/acrylic sheets; other items use
 Shells. Individual saves update only that item's name and price, preserving
 other metadata and menu entries. Prices accept zero and up to two decimal places.
+The one-time wheel/motor update has been applied; no migration panel is shown.

@@ -15,10 +15,10 @@ test('planned updates only touch the five selected price fields', () => {
 
 test('item validation accepts zero and decimals without truncation', () => {
     assert.deepEqual(validateMenuItem('1001',' Arduino ','0'), {name:'Arduino',price:0});
-    assert.equal(validateMenuItem('1001','Wood Sheet','3.29').price,3.29);
+    assert.equal(validateMenuItem('10002','Wood Sheet','3.29').price,3.29);
     for (const value of ['', ' ', '-1', 'NaN', 'Infinity', '1.235']) {
         assert.throws(() => validateMenuItem('1001','Item',value));
     }
-    for (const barcode of ['1','12345','12ab']) assert.throws(() => validateMenuItem(barcode,'Item','3'));
+    for (const barcode of ['','12ab']) assert.throws(() => validateMenuItem(barcode,'Item','3'));
     assert.throws(() => validateMenuItem('1001','  ','3'));
 });

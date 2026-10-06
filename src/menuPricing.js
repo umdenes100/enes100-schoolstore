@@ -18,7 +18,7 @@ export function priceUpdates(menu) {
 }
 
 export function validateMenuItem(barcode, name, value) {
-    if (!/^\d{4}$/.test(barcode)) throw new Error('Enter a four-digit barcode.');
+    if (!/^\d+$/.test(barcode)) throw new Error('Enter a barcode containing only digits.');
     if (!name.trim()) throw new Error('Enter an item name.');
     const price = Number(value);
     if (String(value).trim() === '' || !Number.isFinite(price) || price < 0 || Math.abs(price * 100 - Math.round(price * 100)) > 1e-8) {

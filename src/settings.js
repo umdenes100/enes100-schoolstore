@@ -1,6 +1,5 @@
-import {priceChanges} from "./menuPricing.js";
 import {itemPrice, isDollarItem, escapeHtml} from "./currency.js";
-import {getMenu, saveMenuItem, deleteMenuItem, applyWheelMotorPrices} from "./menu.js";
+import {getMenu, saveMenuItem, deleteMenuItem} from "./menu.js";
 import {setPage} from "./main.js";
 import {getHistory} from "./history.js";
 
@@ -12,7 +11,7 @@ export async function renderSettings(message = "") {
             <td>${escapeHtml(barcode)}</td>
             <td>${escapeHtml(item.name)}</td>
             <td>${itemPrice(item)}</td>
-            <td><button class="edit-item" data-barcode="${escapeHtml(barcode)}">Edit</button> <button class="delete" data-barcode="${escapeHtml(barcode)}">Delete</button></td>
+            <td class="delete" data-barcode="${escapeHtml(barcode)}">🗑️</td>
         </tr>`
     ).join('');
     const history = await getHistory();
@@ -29,15 +28,8 @@ export async function renderSettings(message = "") {
     document.getElementById('settings').innerHTML = `
 <h1> Settings ⚙️</h1>
 <h2>Edit Menu</h2>
-<p>Choose Edit next to an item, change its price, and select Save Item. Prices are per item.</p>
+<p>To edit a menu item, type in the barcode and new properties and click add item.</p>
 <p id="menuStatus" role="status">${escapeHtml(message)}</p>
-<fieldset>
-    <legend>Wheel and motor prices</legend>
-    <p>Review and apply these prices to the checkout menu:</p>
-    <ul>${Object.entries(priceChanges).map(([barcode, target]) => `<li>${escapeHtml(target.name)} (${barcode}): ${menu[barcode] ? itemPrice(menu[barcode]) : 'Missing'} → ${itemPrice(target)} each</li>`).join('')}</ul>
-    <p>The separate Big Wheel entry stays unchanged.</p>
-    <button id="applyPrices">Apply these prices</button>
-</fieldset>
 <style>
 .delete {
     cursor: pointer;
@@ -47,8 +39,8 @@ export async function renderSettings(message = "") {
     <tr>
         <th>Barcode</th>
         <th>Name</th>
-        <th>Price (Shells or dollars)</th>
-        <th>Actions</th>
+        <th>Price</th>
+        <th>delete</th>
     </tr>
     ${menuStr}
 </table>
@@ -58,7 +50,7 @@ export async function renderSettings(message = "") {
     <label>Name:<input type="text" id="addItemName"></label>
     <p>Prices are in Shells, except Wood Sheet and Acrylic Sheet prices, which are in dollars and paid separately.</p>
     <label><span id="priceUnit">Price (Shells)</span>:<input type="number" id="addItemPrice" min="0" step="0.01"></label>
-    <button id="addItemButton">Save Item</button>
+    <button id="addItemButton">Add Item</button>
 </fieldset>
 <fieldset style="height: 100px; overflow-y: scroll">
     <legend>Purchase / Refund History
@@ -98,23 +90,12 @@ export async function renderSettings(message = "") {
             button.disabled = false;
         }
     };
-    document.querySelectorAll('.edit-item').forEach(button => button.onclick = () => {
-        const barcode = button.dataset.barcode;
-        barcodeInput.value = barcode;
-        nameInput.value = menu[barcode].name;
-        priceInput.value = menu[barcode].price;
-        updateUnit();
-        priceInput.focus();
-    });
     document.querySelectorAll('.delete').forEach(button => button.onclick = () => {
         const barcode = button.dataset.barcode;
         runSave(button, () => deleteMenuItem(barcode), 'Item deleted.');
     });
     document.getElementById('addItemButton').onclick = (event) => runSave(event.currentTarget,
         () => saveMenuItem(barcodeInput.value.trim(), nameInput.value, priceInput.value), 'Item saved.');
-    document.getElementById('applyPrices').onclick = (event) => runSave(event.currentTarget,
-        applyWheelMotorPrices, 'Wheel and motor prices saved.');
-
     document.getElementById('downloadHistoryAsCSV').onclick = () => {
         // Takes the entire history, writes it to a CSV file, and downloads it.
         // First row should be labels. Same format as table.

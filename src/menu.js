@@ -36,7 +36,7 @@ export async function saveMenuItem(barcode, name, price) {
 }
 
 export async function deleteMenuItem(barcode) {
-    if (!/^\d{4}$/.test(barcode)) throw new Error('Invalid barcode.');
+    if (!/^\d+$/.test(barcode)) throw new Error('Invalid barcode.');
     await remove(ref(database, `menu/${barcode}`));
 }
 

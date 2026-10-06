@@ -1,4 +1,4 @@
-const shellIcon = new URL('./assets/umd_shell.jpg', import.meta.url).href;
+const shellIcon = new URL('./assets/umd_shell.png', import.meta.url).href;
 
 // Sheet materials are paid for separately in dollars, never from a Shells wallet.
 export function isDollarItem(item) {

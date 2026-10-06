@@ -1,3 +1,4 @@
+import {itemPrice} from "./currency.js";
 import {getMenu, setMenu} from "./menu.js";
 import {setPage} from "./main.js";
 import {getHistory} from "./history.js";
@@ -9,7 +10,7 @@ export async function renderSettings() {
         `<tr>
             <td>${barcode}</td>
             <td>${item.name}</td>
-            <td>$${item.price}</td>
+            <td>${itemPrice(item)}</td>
             <td class="delete" id="${barcode}">🗑️</td>
         </tr>`
     ).join('');
@@ -37,7 +38,7 @@ export async function renderSettings() {
     <tr>
         <th>Barcode</th>
         <th>Name</th>
-        <th>Price</th>
+        <th>Price (Shells or dollars)</th>
         <th>delete</th>
     </tr>
     ${menuStr}
@@ -46,6 +47,7 @@ export async function renderSettings() {
     <legend>Add / Update Item</legend>
     <label>Barcode:<input type="text" id="addItemBarcode"></label>
     <label>Name:<input type="text" id="addItemName"></label>
+    <p>Prices are in Shells, except Wood Sheet and Acrylic Sheet prices, which are in dollars and paid separately.</p>
     <label>Price:<input type="number" id="addItemPrice" min="0"></label>
     <button id="addItemButton">Add Item</button>
 </fieldset>

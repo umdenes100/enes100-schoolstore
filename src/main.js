@@ -1,3 +1,4 @@
+import {shells} from "./currency.js";
 import {accountUpdates, addSections, checkout, deleteSections, getTeamData, refund,removeSectionList,updateSectionList,getSectionList,syncSectionsFromUmd,removeAllSections} from "./databaseFunctions.js";
 import {hide, show} from "./showhide.js"; // Import the functions
 import './menu.js'
@@ -70,7 +71,7 @@ async function renderTeamSummary(teamData, section, missionType) {
     document.getElementById('details').innerHTML = `
         <p>Section: ${section}</p>
         <p>Mission Type: ${missionType}</p>
-        <p>Account Balance: $${teamData.wallet ?? 'N/A'}</p>
+        <p>Account Balance: ${shells(teamData.wallet)}</p>
         ${itemsHTML}  
     `;
 }

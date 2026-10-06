@@ -1,3 +1,4 @@
+import {shells, itemPrice, isDollarItem} from "./currency.js";
 import {child, get, onValue, ref, set} from "firebase/database";
 import {database} from './firebaseConfig.js';
 import {getMenu} from "./menu.js";
@@ -200,9 +201,12 @@ export async function checkout(section, mission, barcode) {
     }
 
     const item = menu[barcode];
+    if (isDollarItem(item)) {
+        return 'Wood and acrylic sheets are paid for separately in dollars. Please contact your instructor or TA; your Shells balance is unchanged.';
+    }
 
     if (teamData.wallet < item.price) {
-        return `Insufficient funds. Current Balance: $${teamData.wallet}, Item Price: $${item.price}`;
+        return `Insufficient Shells. Current Balance: ${shells(teamData.wallet)}, Item Price: ${itemPrice(item)}`;
     }
 
     teamData.wallet -= item.price;
@@ -227,6 +231,9 @@ export async function refund(section, mission, barcode) {
     }
 
     const item = menu[barcode];
+    if (isDollarItem(item)) {
+        return 'Wood and acrylic sheets are paid for separately in dollars. Please contact your instructor or TA; your Shells balance is unchanged.';
+    }
 
     if (!teamData.items || !teamData.items[barcode] > 0) {
         return `Team does not have a ${item.name}.`;
@@ -246,22 +253,13 @@ export async function refund(section, mission, barcode) {
 export async function accountUpdates(Section, Mission, screen) {
     const accountRef = ref(database, `store-accounts/${Section}${Mission}/wallet`);
 
-    // const snapshot = await get(accountRef);
-    // const initialBalance = snapshot.val();
-    //
-    // if (screen) {
-    //     document.getElementById('purchaseBalance').innerText = `Account Balance: $${initialBalance}`;
-    // } else {
-    //     document.getElementById('returnBalance').innerText = `Account Balance: $${initialBalance}`;
-    // }
-
     onValue(accountRef, (snapshot) => {
         const newBalance = snapshot.val();
 
         if (screen) {
-            document.getElementById('purchaseBalance').innerText = `Account Balance: $${newBalance}`;
+            document.getElementById('purchaseBalance').innerHTML = `Account Balance: ${shells(newBalance)}`;
         } else {
-            document.getElementById('returnBalance').innerText = `Account Balance: $${newBalance}`;
+            document.getElementById('returnBalance').innerHTML = `Account Balance: ${shells(newBalance)}`;
         }
     });
 }

@@ -202,7 +202,7 @@ export async function checkout(section, mission, barcode) {
 
     const item = menu[barcode];
     if (isDollarItem(item)) {
-        return 'Wood sheets are paid for separately in dollars. Please contact your instructor or TA; your Shells balance is unchanged.';
+        return 'Wood sheets and Arduino Uno R4 WiFi boards are purchased with real cash (US dollars), not Shells, in JMP2108 from Mrs. Nelpe Wachsman, Monday–Friday, 9am–4pm. Your Shells balance is unchanged.';
     }
 
     if (teamData.wallet < item.price) {
@@ -232,7 +232,7 @@ export async function refund(section, mission, barcode) {
 
     const item = menu[barcode];
     if (isDollarItem(item)) {
-        return 'Wood sheets are paid for separately in dollars. Please contact your instructor or TA; your Shells balance is unchanged.';
+        return 'Wood sheets and Arduino Uno R4 WiFi boards are purchased with real cash (US dollars), not Shells, in JMP2108 from Mrs. Nelpe Wachsman, Monday–Friday, 9am–4pm. Your Shells balance is unchanged.';
     }
 
     if (!teamData.items || !teamData.items[barcode] > 0) {

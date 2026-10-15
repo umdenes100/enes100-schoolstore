@@ -5,7 +5,7 @@ const root = new URL('../src/', import.meta.url);
 let team = {wallet:50, items:{}};
 let writes = 0;
 let logs = 0;
-const menu = {1001:{name:'Arduino Uno',price:8}, 1002:{name:'Wood Sheet',price:3},1004:{name:'PLA Sheet',price:2}};
+const menu = {1001:{name:'Arduino Uno',price:8}, 1002:{name:'Wood Sheet',price:3},1004:{name:'PLA Sheet',price:2},1008:{name:'Arduino Uno R4 WiFi',price:14}};
 const elements = {purchaseBalance:{},returnBalance:{}};
 const context = vm.createContext({URL, console, document:{getElementById:id=>elements[id]}});
 function mock(exports) {
@@ -27,7 +27,7 @@ await checkout('0000','Test','1001');assert.equal(team.wallet,42);assert.equal(t
 await refund('0000','Test','1001');assert.equal(team.wallet,50);assert.equal(team.items['1001'],0);
 await checkout('0000','Test','1004');assert.equal(team.wallet,48);
 const oldWrites=writes, oldLogs=logs;
-for(const code of ['1002']) {assert.match(await checkout('0000','Test',code),/paid for separately/);assert.match(await refund('0000','Test',code),/paid for separately/);}
+for(const code of ['1002','1008']) {assert.match(await checkout('0000','Test',code),/purchased with real cash/);assert.match(await refund('0000','Test',code),/purchased with real cash/);}
 assert.equal(team.wallet,48);assert.equal(writes,oldWrites);assert.equal(logs,oldLogs);
 team.wallet=0;assert.match(await checkout('0000','Test','1001'),/Insufficient Shells/);assert.equal(writes,oldWrites);
 await accountUpdates('0000','Test',true);await accountUpdates('0000','Test',false);

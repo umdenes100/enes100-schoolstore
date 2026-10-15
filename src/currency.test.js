@@ -2,8 +2,8 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {shells, itemPrice, isDollarItem} from './currency.js';
 
-test('only wood sheets retain dollar pricing', () => {
-    for (const name of ['Wood Sheet', '12 x 24 WOOD SHEETS']) {
+test('wood sheets and R4 WiFi boards use dollar pricing', () => {
+    for (const name of ['Arduino Uno R4 WiFi', 'Wood Sheet', '12 x 24 WOOD SHEETS']) {
         assert.equal(isDollarItem({name}), true);
         assert.equal(itemPrice({name, price: 3}), '$3');
     }

@@ -1,8 +1,9 @@
 const shellIcon = new URL('./assets/umd_shell.png', import.meta.url).href;
 
-// Sheet materials are paid for separately in dollars, never from a Shells wallet.
+// Cash purchases never debit or credit a Shells wallet.
 export function isDollarItem(item) {
-    return /\bwood\b/i.test(item.name) && /\bsheets?\b/i.test(item.name);
+    return (/\bwood\b/i.test(item.name) && /\bsheets?\b/i.test(item.name))
+        || /^Arduino Uno R4 WiFi\*?$/i.test(item.name.trim());
 }
 
 export function escapeHtml(value) {

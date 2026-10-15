@@ -48,7 +48,7 @@ export async function renderSettings(message = "") {
     <legend>Add / Update Item</legend>
     <label>Barcode:<input type="text" id="addItemBarcode"></label>
     <label>Name:<input type="text" id="addItemName"></label>
-    <p>Prices are in Shells, except Wood Sheet and Acrylic Sheet prices, which are in dollars and paid separately.</p>
+    <p>Prices are in Shells, except Wood Sheet prices, which are in dollars and paid separately.</p>
     <label><span id="priceUnit">Price (Shells)</span>:<input type="number" id="addItemPrice" min="0" step="0.01"></label>
     <button id="addItemButton">Add Item</button>
 </fieldset>

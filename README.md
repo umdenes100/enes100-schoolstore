@@ -25,7 +25,7 @@ team balances, and purchase history. Each wheel price is per wheel; motors are
 refunds use the current menu price, including for items purchased before a change.
 
 Use the original Settings → Edit Menu form to add or update an item by barcode.
-The price label switches to US dollars for wood/acrylic sheets; other items use
+The price label switches to US dollars for wood sheets; other items use
 Shells. Individual saves update only that item's name and price, preserving
 other metadata and menu entries. Prices accept zero and up to two decimal places.
 The one-time wheel/motor update has been applied; no migration panel is shown.

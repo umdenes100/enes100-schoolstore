@@ -2,12 +2,12 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {shells, itemPrice, isDollarItem} from './currency.js';
 
-test('only wood and acrylic sheets retain dollar pricing', () => {
-    for (const name of ['Wood Sheet', 'Acrylic Sheet*', '12 x 24 WOOD SHEETS']) {
+test('only wood sheets retain dollar pricing', () => {
+    for (const name of ['Wood Sheet', '12 x 24 WOOD SHEETS']) {
         assert.equal(isDollarItem({name}), true);
         assert.equal(itemPrice({name, price: 3}), '$3');
     }
-    for (const name of ['PLA Sheet', 'Arduino Uno', 'Wood screws', 'Acrylic wheel']) {
+    for (const name of ['PLA Sheet', 'Arduino Uno', 'Wood screws', 'Plastic wheel']) {
         assert.equal(isDollarItem({name}), false);
         assert.match(itemPrice({name, price: 3}), /alt="Shells"/);
     }

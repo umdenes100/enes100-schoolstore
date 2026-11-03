@@ -1,10 +1,11 @@
 import {shells} from "./currency.js";
-import {accountUpdates, addSections, checkout, deleteSections, getTeamData, refund,removeSectionList,updateSectionList,getSectionList,syncSectionsFromUmd,removeAllSections} from "./databaseFunctions.js";
+import {accountUpdates, addSections, deleteSections, getTeamData, refund,removeSectionList,updateSectionList,getSectionList,syncSectionsFromUmd,removeAllSections} from "./databaseFunctions.js";
 import {hide, show} from "./showhide.js"; // Import the functions
 import './menu.js'
 import {getMenu} from "./menu.js";
 import {renderSettings} from "./settings.js";
 import {setName} from "./history.js";
+import {buy, renderPurchasePage} from "./purchase.js";
 
 let section;
 let missionType;
@@ -106,6 +107,7 @@ async function loadPurchasePage() {
     missionType = document.getElementById("missionType").value;
     await accountUpdates(section, missionType, true);
     setPage('purchase')
+    await renderPurchasePage(section, missionType);
 }
 
 async function loadReturnPage() {
@@ -123,9 +125,8 @@ async function loadSettingsPage() {
 
 async function executePurchase() {
     barcode = document.getElementById('barcode1').value;
-    const result = await checkout(section, missionType, barcode);
     document.getElementById('barcode1').value = '';
-    document.getElementById('purchaseError').innerHTML = result ?? '';
+    await buy(barcode);
 }
 
 async function teamReturn() {

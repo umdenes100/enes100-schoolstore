@@ -69,12 +69,23 @@
     </div>
 
     <div id="purchase" style="display:none;">
-        <h1>Scan 🔬</h1>
-        <input type="number" id="barcode1">
-        <button id="executePurchase">Buy</button>
-        <button id="purchaseGoBack">Done</button>
-        <p id="purchaseError" style="color: red"></p>
-        <p id="purchaseBalance">Account Balance: </p>
+        <h1>Buy Items 🛒</h1>
+        <div class="purchase-header">
+            <div class="purchase-toolbar">
+                <p id="purchaseBalance">Account Balance: </p>
+                <button id="purchaseGoBack">Done</button>
+            </div>
+            <div class="purchase-toolbar">
+                <input type="search" id="itemSearch" placeholder="Search items by name or barcode">
+                <label class="barcode-entry">
+                    Scan:
+                    <input type="number" id="barcode1" placeholder="Barcode">
+                    <button id="executePurchase">Buy</button>
+                </label>
+            </div>
+            <p id="purchaseError" class="purchase-status" role="status"></p>
+        </div>
+        <div id="itemGrid" class="item-grid"></div>
     </div>
 
     <div id="return" style="display:none;">
